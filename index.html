@@ -15,6 +15,10 @@
         <span id="matches">Pares: 0 / 6</span>
       </div>
       <div class="toolbar">
+        <div id="remote-info" class="remote-info" hidden>
+          <span id="remote-info-code"></span>
+          <a id="remote-info-link" href="controle.html">Abrir controle</a>
+        </div>
         <button id="learn-button" class="secondary-button" type="button" aria-pressed="false">Módulo Aprender</button>
         <button id="restart-button" class="restart-button" type="button">Reiniciar jogo</button>
       </div>
@@ -43,6 +47,9 @@
     </section>
   </main>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

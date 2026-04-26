@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle remoto dos slides</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="remote-body">
+  <main class="remote-control" aria-live="polite">
+    <section class="remote-panel">
+      <p class="remote-label">Controle remoto</p>
+      <h1>Slides</h1>
+      <p id="remote-session" class="remote-session">Sessao: sem codigo</p>
+      <p id="remote-status" class="remote-status">Conectando...</p>
+
+      <form id="remote-connect-form" class="remote-connect-form">
+        <label for="remote-session-input">Codigo da sessao</label>
+        <div class="remote-connect-row">
+          <input id="remote-session-input" class="remote-session-input" name="session" type="text" inputmode="text" autocomplete="off" maxlength="12" placeholder="A7K29Q" required>
+          <button class="remote-connect-button" type="submit">Conectar</button>
+        </div>
+      </form>
+
+      <div id="remote-actions" class="remote-actions" hidden>
+        <button id="remote-prev" class="remote-button remote-button-secondary" type="button">Voltar</button>
+        <button id="remote-next" class="remote-button remote-button-primary" type="button">Proximo</button>
+        <button id="remote-close" class="remote-button remote-button-danger" type="button">Sair</button>
+        <button id="remote-disconnect" class="remote-disconnect-button" type="button">Fechar sessao</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+    const sessionElement = document.getElementById("remote-session");
+    const statusElement = document.getElementById("remote-status");
+    const connectForm = document.getElementById("remote-connect-form");
+    const sessionInput = document.getElementById("remote-session-input");
+    const actionsElement = document.getElementById("remote-actions");
+    const actionButtons = document.querySelectorAll(".remote-button");
+    const params = new URLSearchParams(window.location.search);
+    const initialSessionId = normalizeSessionId(params.get("session") || "");
+    let commandRef = null;
+
+    function setStatus(message, isError = false) {
+      statusElement.textContent = message;
+      statusElement.classList.toggle("is-error", isError);
+    }
+
+    function setButtonsDisabled(disabled) {
+      actionButtons.forEach((button) => {
+        button.disabled = disabled;
+      });
+    }
+
+    function hasFirebaseConfig(config) {
+      return Boolean(config?.apiKey && config?.databaseURL && config?.projectId && config?.appId);
+    }
+
+    function normalizeSessionId(sessionId) {
+      return sessionId.trim().replace(/\s+/g, "").toUpperCase();
+    }
+
+    function connectToSession(sessionId) {
+      if (!sessionId) {
+        setStatus("Digite o codigo mostrado na tela principal.", true);
+        return;
+      }
+
+      sessionElement.textContent = `Sessao: ${sessionId}`;
+
+      if (!window.firebase || !hasFirebaseConfig(window.firebaseRemoteConfig)) {
+        setStatus("Configure o Firebase em firebase-config.js.", true);
+        setButtonsDisabled(true);
+        return;
+      }
+
+      if (!firebase.apps.length) {
+        firebase.initializeApp(window.firebaseRemoteConfig);
+      }
+
+      commandRef = firebase.database().ref(`sessions/${sessionId}/command`);
+      connectForm.hidden = true;
+      actionsElement.hidden = false;
+      setButtonsDisabled(false);
+      setStatus("Pronto para controlar os slides.");
+
+      const controlUrl = new URL(window.location.href);
+      controlUrl.searchParams.set("session", sessionId);
+      window.history.replaceState({}, "", controlUrl);
+    }
+
+    function disconnectSession() {
+      commandRef = null;
+      sessionElement.textContent = "Sessao: sem codigo";
+      sessionInput.value = "";
+      connectForm.hidden = false;
+      actionsElement.hidden = true;
+      setButtonsDisabled(true);
+      setStatus("Digite o codigo exibido na tela principal.");
+
+      const controlUrl = new URL(window.location.href);
+      controlUrl.searchParams.delete("session");
+      window.history.replaceState({}, "", controlUrl);
+      sessionInput.focus();
+    }
+
+    async function sendCommand(action) {
+      if (!commandRef) {
+        setStatus("Conecte uma sessao antes de enviar comandos.", true);
+        return;
+      }
+
+      setButtonsDisabled(true);
+      setStatus("Enviando comando...");
+
+      try {
+        await commandRef.set({
+          action,
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          sentAt: firebase.database.ServerValue.TIMESTAMP,
+        });
+        setStatus("Comando enviado.");
+      } catch (error) {
+        setStatus("Nao foi possivel enviar o comando.", true);
+      } finally {
+        window.setTimeout(() => setButtonsDisabled(false), 180);
+      }
+    }
+
+    setButtonsDisabled(true);
+    setStatus("Digite o codigo exibido na tela principal.");
+
+    connectForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      connectToSession(normalizeSessionId(sessionInput.value));
+    });
+
+    document.getElementById("remote-prev").addEventListener("click", () => sendCommand("prev"));
+    document.getElementById("remote-next").addEventListener("click", () => sendCommand("next"));
+    document.getElementById("remote-close").addEventListener("click", () => sendCommand("close"));
+    document.getElementById("remote-disconnect").addEventListener("click", disconnectSession);
+
+    if (initialSessionId) {
+      sessionInput.value = initialSessionId;
+      connectToSession(initialSessionId);
+    } else {
+      sessionInput.focus();
+    }
+  </script>
+</body>
+</html>

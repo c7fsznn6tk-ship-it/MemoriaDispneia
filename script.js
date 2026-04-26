@@ -101,6 +101,9 @@ const learningSlideImageElement = document.getElementById("learning-slide-image"
 const prevSlideButton = document.getElementById("prev-slide-button");
 const nextSlideButton = document.getElementById("next-slide-button");
 const closeLearningButton = document.getElementById("close-learning-button");
+const remoteInfoElement = document.getElementById("remote-info");
+const remoteInfoCodeElement = document.getElementById("remote-info-code");
+const remoteInfoLinkElement = document.getElementById("remote-info-link");
 
 const learningModules = {
   1: { folder: "1A", totalSlides: 21 },
@@ -121,6 +124,7 @@ let isLearningMode = true;
 let currentSlideIndex = 0;
 let pendingRoundAdvance = false;
 let activeLearningSlides = [];
+let lastRemoteCommandId = null;
 
 function shuffle(array) {
   const shuffled = [...array];
@@ -223,6 +227,70 @@ function showNextSlide() {
 
   currentSlideIndex += 1;
   updateLearningSlide();
+}
+
+function handleRemoteCommand(command) {
+  if (!command?.id || command.id === lastRemoteCommandId) {
+    return;
+  }
+
+  lastRemoteCommandId = command.id;
+
+  if (learningModalElement.hidden) {
+    return;
+  }
+
+  if (command.action === "prev") {
+    showPreviousSlide();
+    return;
+  }
+
+  if (command.action === "next") {
+    showNextSlide();
+    return;
+  }
+
+  if (command.action === "close") {
+    closeLearningModal();
+  }
+}
+
+function hasFirebaseConfig(config) {
+  return Boolean(config?.apiKey && config?.databaseURL && config?.projectId && config?.appId);
+}
+
+function normalizeSessionId(sessionId) {
+  return sessionId.trim().replace(/\s+/g, "").toUpperCase();
+}
+
+function createSessionId() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const randomValues = new Uint32Array(6);
+  window.crypto.getRandomValues(randomValues);
+
+  return Array.from(randomValues, (value) => alphabet[value % alphabet.length]).join("");
+}
+
+function setupRemoteControl() {
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = normalizeSessionId(params.get("session") || createSessionId());
+
+  const controlUrl = new URL("controle.html", window.location.href);
+  remoteInfoCodeElement.textContent = `Codigo: ${sessionId}`;
+  remoteInfoLinkElement.href = controlUrl.href;
+  remoteInfoElement.hidden = false;
+
+  if (!window.firebase || !hasFirebaseConfig(window.firebaseRemoteConfig)) {
+    window.console.warn("Controle remoto desativado: configure o Firebase em firebase-config.js.");
+    return;
+  }
+
+  firebase.initializeApp(window.firebaseRemoteConfig);
+  const commandRef = firebase.database().ref(`sessions/${sessionId}/command`);
+
+  commandRef.on("value", (snapshot) => {
+    handleRemoteCommand(snapshot.val());
+  });
 }
 
 function resetTurn() {
@@ -463,3 +531,4 @@ window.addEventListener("beforeunload", (event) => {
 });
 
 startGame();
+setupRemoteControl();

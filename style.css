@@ -75,6 +75,22 @@ body {
   margin-bottom: 12px;
 }
 
+.remote-info {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.remote-info a {
+  color: #1f4f9a;
+  text-decoration: none;
+  border-bottom: 2px solid rgba(31, 79, 154, 0.28);
+}
+
 .secondary-button,
 .restart-button {
   border: 0;
@@ -358,6 +374,164 @@ body {
   color: var(--accent-dark);
 }
 
+.remote-body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.remote-control {
+  width: min(100%, 480px);
+}
+
+.remote-panel {
+  padding: 28px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow);
+}
+
+.remote-label {
+  margin: 0 0 8px;
+  color: var(--accent-dark);
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.remote-panel h1 {
+  margin: 0;
+  color: #1f4f9a;
+  font-size: clamp(2.4rem, 14vw, 4.2rem);
+  line-height: 0.95;
+}
+
+.remote-session,
+.remote-status {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.remote-status.is-error {
+  color: #9b2f22;
+}
+
+.remote-connect-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.remote-connect-form label {
+  color: var(--text);
+  font-weight: 900;
+}
+
+.remote-connect-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.remote-session-input {
+  min-width: 0;
+  border: 1px solid rgba(36, 48, 58, 0.18);
+  border-radius: 14px;
+  padding: 14px 12px;
+  color: var(--text);
+  background: #ffffff;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.remote-session-input:focus {
+  border-color: rgba(31, 79, 154, 0.58);
+  outline: 3px solid rgba(47, 127, 194, 0.18);
+}
+
+.remote-connect-button {
+  border: 0;
+  border-radius: 14px;
+  padding: 0 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1f4f9a, #2f7fc2);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(31, 79, 154, 0.18);
+}
+
+.remote-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.remote-button {
+  min-height: 64px;
+  border: 0;
+  border-radius: 16px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(36, 48, 58, 0.16);
+  transition: transform 140ms ease, opacity 140ms ease, box-shadow 140ms ease;
+}
+
+.remote-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(36, 48, 58, 0.2);
+}
+
+.remote-button:active {
+  transform: translateY(0);
+}
+
+.remote-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.remote-button-primary {
+  background: linear-gradient(135deg, #1f4f9a, #2f7fc2);
+}
+
+.remote-button-secondary {
+  background: linear-gradient(135deg, #53606b, #24303a);
+}
+
+.remote-button-danger {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+}
+
+.remote-disconnect-button {
+  margin-top: 14px;
+  min-height: 48px;
+  border: 1px solid rgba(36, 48, 58, 0.16);
+  border-radius: 14px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.72);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.remote-disconnect-button:hover {
+  color: var(--text);
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
 @media (max-width: 640px) {
   .app {
     width: 100vw;
@@ -380,6 +554,20 @@ body {
     flex-direction: column;
     align-items: stretch;
     margin-bottom: 10px;
+  }
+
+  .remote-info {
+    width: 100%;
+    margin-right: 0;
+    justify-content: space-between;
+  }
+
+  .remote-connect-row {
+    grid-template-columns: 1fr;
+  }
+
+  .remote-connect-button {
+    min-height: 52px;
   }
 
   .secondary-button,
