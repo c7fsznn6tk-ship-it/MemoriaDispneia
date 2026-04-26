@@ -1,11 +1,4 @@
-const frontCards = Array.from({ length: 12 }, (_, index) => {
-  const number = String(index + 1).padStart(2, "0");
-
-  return {
-    code: number,
-    image: `assets/${number}.png`,
-  };
-});
+const frontCardImage = "assets/00.png";
 
 const allPairs = [
   {
@@ -124,7 +117,7 @@ let boardLocked = false;
 let waitingForNextPick = false;
 let currentRound = 0;
 let roundPairs = [];
-let isLearningMode = false;
+let isLearningMode = true;
 let currentSlideIndex = 0;
 let pendingRoundAdvance = false;
 let activeLearningSlides = [];
@@ -149,6 +142,18 @@ function updateStatus() {
 function showGameComplete() {
   finalStatsElement.textContent = `Total de tentativas: ${attempts}`;
   gameCompleteElement.hidden = false;
+}
+
+function isGameInProgress() {
+  return roundPairs.length > 0 && gameCompleteElement.hidden;
+}
+
+function confirmRestartGame() {
+  if (!isGameInProgress()) {
+    return true;
+  }
+
+  return window.confirm("Reiniciar o jogo atual? O progresso desta partida sera perdido.");
 }
 
 function updateLearningButton() {
@@ -336,12 +341,13 @@ function createCard({ id, code, frontImage, pairId, side, backImage }) {
   card.className = "card";
   card.dataset.pairId = pairId;
   card.dataset.side = side;
-  card.setAttribute("aria-label", `Carta ${Number(code)}`);
+  card.setAttribute("aria-label", `Carta ${code}`);
 
   card.innerHTML = `
     <div class="card-inner">
       <div class="card-face card-front">
-        <img src="${frontImage}" alt="Carta ${Number(code)}">
+        <img src="${frontImage}" alt="">
+        <span class="card-number" aria-hidden="true">${code}</span>
       </div>
       <div class="card-face card-back">
         <img src="${backImage}" alt="Combinacao ${pairId}${side}">
@@ -356,13 +362,13 @@ function createCard({ id, code, frontImage, pairId, side, backImage }) {
 
 function renderBoard() {
   const shuffledPairs = shuffle(roundPairs[currentRound]);
-  const deck = frontCards.map((option, index) => {
-    const pairCard = shuffledPairs[index];
+  const deck = shuffledPairs.map((pairCard, index) => {
+    const cardNumber = currentRound * 12 + index + 1;
 
     return {
-      id: `${option.code}-${pairCard.pairId}${pairCard.side}`,
-      code: option.code,
-      frontImage: option.image,
+      id: `${cardNumber}-${pairCard.pairId}${pairCard.side}`,
+      code: cardNumber,
+      frontImage: frontCardImage,
       pairId: pairCard.pairId,
       side: pairCard.side,
       backImage: pairCard.image,
@@ -433,7 +439,21 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-restartButton.addEventListener("click", startGame);
+restartButton.addEventListener("click", () => {
+  if (confirmRestartGame()) {
+    startGame();
+  }
+});
+
 restartButtonFinish.addEventListener("click", startGame);
+
+window.addEventListener("beforeunload", (event) => {
+  if (!isGameInProgress()) {
+    return;
+  }
+
+  event.preventDefault();
+  event.returnValue = "";
+});
 
 startGame();

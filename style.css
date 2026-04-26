@@ -183,12 +183,28 @@ body {
   transform: rotateY(180deg);
 }
 
+.card-front {
+  position: relative;
+}
+
 .card-face img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: contain;
   background: #ffffff;
+}
+
+.card-number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #1d4776;
+  font-family: "Barlow-Preto", "Barlow", sans-serif;
+  font-size: clamp(3.2rem, 7.5vw, 7.4rem);
+  font-weight: 900;
+  line-height: 1;
+  transform: translate(-50%, -50%);
 }
 
 .learning-modal,
