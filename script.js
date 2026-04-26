@@ -164,7 +164,12 @@ function updateLearningButton() {
 function updateLearningSlide() {
   learningSlideImageElement.src = activeLearningSlides[currentSlideIndex];
   prevSlideButton.disabled = currentSlideIndex === 0;
-  nextSlideButton.disabled = currentSlideIndex === activeLearningSlides.length - 1;
+  nextSlideButton.disabled = false;
+  nextSlideButton.classList.toggle("is-at-end", currentSlideIndex === activeLearningSlides.length - 1);
+  nextSlideButton.setAttribute(
+    "aria-disabled",
+    String(currentSlideIndex === activeLearningSlides.length - 1),
+  );
 }
 
 function buildLearningSlides(pairId) {
@@ -212,6 +217,7 @@ function showPreviousSlide() {
 
 function showNextSlide() {
   if (currentSlideIndex === activeLearningSlides.length - 1) {
+    window.alert("Voce chegou ao final dos slides.");
     return;
   }
 

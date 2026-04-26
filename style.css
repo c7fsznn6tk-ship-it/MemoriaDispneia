@@ -311,7 +311,12 @@ body {
   cursor: not-allowed;
 }
 
-.slide-nav:disabled:hover {
+.slide-nav.is-at-end {
+  opacity: 0.55;
+}
+
+.slide-nav:disabled:hover,
+.slide-nav.is-at-end:hover {
   transform: translateY(-50%);
   background: rgba(36, 48, 58, 0.45);
 }
