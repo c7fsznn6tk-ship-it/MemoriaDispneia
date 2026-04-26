@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo da Memoria</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <section class="board-shell">
+      <div class="status-bar" aria-live="polite">
+        <span id="round">Rodada: 1 / 2</span>
+        <span id="attempts">Tentativas: 0</span>
+        <span id="matches">Pares: 0 / 6</span>
+      </div>
+      <div class="toolbar">
+        <button id="learn-button" class="secondary-button" type="button" aria-pressed="false">Modulo Aprender</button>
+        <button id="restart-button" class="restart-button" type="button">Reiniciar jogo</button>
+      </div>
+      <div id="game-board" class="board" aria-label="Tabuleiro do jogo da memoria"></div>
+      <div id="learning-modal" class="learning-modal" hidden>
+        <div class="learning-card">
+          <button id="close-learning-button" class="icon-button close-button" type="button" aria-label="Fechar explicacao">&times;</button>
+          <div class="learning-stage">
+            <button id="prev-slide-button" class="slide-nav slide-nav-prev" type="button" aria-label="Slide anterior">&lsaquo;</button>
+            <figure class="learning-figure">
+              <img id="learning-slide-image" src="" alt="Explicacao do conjunto 1A e 1B">
+            </figure>
+            <button id="next-slide-button" class="slide-nav slide-nav-next" type="button" aria-label="Proximo slide">&rsaquo;</button>
+          </div>
+        </div>
+      </div>
+      <div id="game-complete" class="game-complete" hidden>
+        <div class="game-complete-card">
+          <p class="game-complete-label">Conclusao</p>
+          <h2>Parabens!</h2>
+          <p>Voce concluiu todas as combinacoes do jogo.</p>
+          <p id="final-stats" class="final-stats"></p>
+          <button id="restart-button-finish" class="restart-button" type="button">Jogar novamente</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
