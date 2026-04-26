@@ -1,88 +1,88 @@
-const frontCardImage = "assets/00.png";
+const frontCardImage = "assets/00.webp";
 
 const allPairs = [
   {
     pairId: "1",
     cards: [
-      { pairId: "1", side: "A", image: "assets/1A.png" },
-      { pairId: "1", side: "B", image: "assets/1B.png" },
+      { pairId: "1", side: "A", image: "assets/1A.webp" },
+      { pairId: "1", side: "B", image: "assets/1B.webp" },
     ],
   },
   {
     pairId: "2",
     cards: [
-      { pairId: "2", side: "A", image: "assets/2A.png" },
-      { pairId: "2", side: "B", image: "assets/2B.png" },
+      { pairId: "2", side: "A", image: "assets/2A.webp" },
+      { pairId: "2", side: "B", image: "assets/2B.webp" },
     ],
   },
   {
     pairId: "3",
     cards: [
-      { pairId: "3", side: "A", image: "assets/3A.png" },
-      { pairId: "3", side: "B", image: "assets/3B.png" },
+      { pairId: "3", side: "A", image: "assets/3A.webp" },
+      { pairId: "3", side: "B", image: "assets/3B.webp" },
     ],
   },
   {
     pairId: "4",
     cards: [
-      { pairId: "4", side: "A", image: "assets/4A.png" },
-      { pairId: "4", side: "B", image: "assets/4B.png" },
+      { pairId: "4", side: "A", image: "assets/4A.webp" },
+      { pairId: "4", side: "B", image: "assets/4B.webp" },
     ],
   },
   {
     pairId: "5",
     cards: [
-      { pairId: "5", side: "A", image: "assets/5A.png" },
-      { pairId: "5", side: "B", image: "assets/5B.png" },
+      { pairId: "5", side: "A", image: "assets/5A.webp" },
+      { pairId: "5", side: "B", image: "assets/5B.webp" },
     ],
   },
   {
     pairId: "6",
     cards: [
-      { pairId: "6", side: "A", image: "assets/6A.png" },
-      { pairId: "6", side: "B", image: "assets/6B.png" },
+      { pairId: "6", side: "A", image: "assets/6A.webp" },
+      { pairId: "6", side: "B", image: "assets/6B.webp" },
     ],
   },
   {
     pairId: "7",
     cards: [
-      { pairId: "7", side: "A", image: "assets/7A.png" },
-      { pairId: "7", side: "B", image: "assets/7B.png" },
+      { pairId: "7", side: "A", image: "assets/7A.webp" },
+      { pairId: "7", side: "B", image: "assets/7B.webp" },
     ],
   },
   {
     pairId: "8",
     cards: [
-      { pairId: "8", side: "A", image: "assets/8A.png" },
-      { pairId: "8", side: "B", image: "assets/8B.png" },
+      { pairId: "8", side: "A", image: "assets/8A.webp" },
+      { pairId: "8", side: "B", image: "assets/8B.webp" },
     ],
   },
   {
     pairId: "9",
     cards: [
-      { pairId: "9", side: "A", image: "assets/9A.png" },
-      { pairId: "9", side: "B", image: "assets/9B.png" },
+      { pairId: "9", side: "A", image: "assets/9A.webp" },
+      { pairId: "9", side: "B", image: "assets/9B.webp" },
     ],
   },
   {
     pairId: "10",
     cards: [
-      { pairId: "10", side: "A", image: "assets/10A.png" },
-      { pairId: "10", side: "B", image: "assets/10B.png" },
+      { pairId: "10", side: "A", image: "assets/10A.webp" },
+      { pairId: "10", side: "B", image: "assets/10B.webp" },
     ],
   },
   {
     pairId: "11",
     cards: [
-      { pairId: "11", side: "A", image: "assets/11A.png" },
-      { pairId: "11", side: "B", image: "assets/11B.png" },
+      { pairId: "11", side: "A", image: "assets/11A.webp" },
+      { pairId: "11", side: "B", image: "assets/11B.webp" },
     ],
   },
   {
     pairId: "12",
     cards: [
-      { pairId: "12", side: "A", image: "assets/12A.png" },
-      { pairId: "12", side: "B", image: "assets/12B.png" },
+      { pairId: "12", side: "A", image: "assets/12A.webp" },
+      { pairId: "12", side: "B", image: "assets/12B.webp" },
     ],
   },
 ];
@@ -165,8 +165,19 @@ function updateLearningButton() {
   learnButton.setAttribute("aria-pressed", String(isLearningMode));
 }
 
+function preloadImage(imagePath) {
+  if (!imagePath) {
+    return;
+  }
+
+  const image = new Image();
+  image.decoding = "async";
+  image.src = imagePath;
+}
+
 function updateLearningSlide() {
   learningSlideImageElement.src = activeLearningSlides[currentSlideIndex];
+  preloadImage(activeLearningSlides[currentSlideIndex + 1]);
   prevSlideButton.disabled = currentSlideIndex === 0;
   nextSlideButton.disabled = false;
   nextSlideButton.classList.toggle("is-at-end", currentSlideIndex === activeLearningSlides.length - 1);
@@ -185,7 +196,7 @@ function buildLearningSlides(pairId) {
 
   return Array.from(
     { length: learningModule.totalSlides },
-    (_, index) => `assets/${learningModule.folder}/${index + 1}.png`,
+    (_, index) => `assets/${learningModule.folder}/${index + 1}.webp`,
   );
 }
 
